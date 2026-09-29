@@ -1,0 +1,10 @@
+{
+  "name": "purple haze",
+  "colors": {
+    "background": "#000000",
+    "primary": "#380052",
+    "head": "#fdb4fe",
+    "shine": "#007a23",
+    "interface": "#5d272a"
+  }
+}

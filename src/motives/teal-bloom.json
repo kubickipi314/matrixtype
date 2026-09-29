@@ -1,0 +1,10 @@
+{
+  "name": "teal bloom",
+  "colors": {
+    "background": "#000000",
+    "primary": "#119289",
+    "head": "#16ac86",
+    "shine": "#ff7adc",
+    "interface": "#757575"
+  }
+}

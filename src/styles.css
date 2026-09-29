@@ -1,0 +1,305 @@
+:root {
+  /* monkeytype's defaults: Roboto Mono for UI, Lexend Deca for the logo. */
+  --ui-font: 'Roboto Mono', 'Cascadia Mono', Consolas, monospace;
+  --logo-font: 'Lexend Deca', 'Roboto Mono', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: var(--ui-font);
+}
+
+body.cursor-hidden,
+body.cursor-hidden * {
+  cursor: none !important;
+}
+
+/*
+ * Every interface color derives from --ui-color (Colors -> Interface), set
+ * inline on .stage together with --glyph-font and --glitch-spacing.
+ */
+.stage {
+  --ui: var(--ui-color, #86fea4);
+  --ui-dim: color-mix(in srgb, var(--ui) 75%, black);
+  --ui-faint: color-mix(in srgb, var(--ui) 14%, transparent);
+  --ui-glow: color-mix(in srgb, var(--ui) 70%, transparent);
+  position: fixed;
+  inset: 0;
+  color: var(--ui);
+}
+
+.matrix-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---------------------------------------------------------------- flash */
+
+.screen-flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background: var(--flash-color);
+  animation-name: screen-flash;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* Percentages are of durationMs * FADE_STRETCH (see ScreenFlash.tsx): fast attack, long tail. */
+@keyframes screen-flash {
+  0% {
+    opacity: 0;
+    animation-timing-function: ease-out;
+  }
+  3.2% {
+    opacity: var(--flash-opacity);
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.35, 1);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------- buttons */
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0.2em 0.1em;
+  font: inherit;
+  color: var(--ui-dim);
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    text-shadow 0.15s;
+}
+
+.link-btn:hover,
+.link-btn:focus-visible {
+  color: var(--ui);
+  text-shadow: 0 0 8px var(--ui-glow);
+  outline: none;
+}
+
+/* ---------------------------------------------------------------- chrome */
+
+/* Chrome never slides or fades; GlitchText makes letters appear/vanish in place. */
+.logo,
+.options-bar {
+  position: absolute;
+  top: 1rem;
+  pointer-events: none;
+}
+
+.logo.visible,
+.options-bar.visible {
+  pointer-events: auto;
+}
+
+.logo {
+  left: 1.5rem;
+  margin: 0;
+  font-family: var(--logo-font);
+  font-size: 2.4rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--ui) 60%, transparent);
+  user-select: none;
+}
+
+.options-bar {
+  right: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+
+.options-item {
+  color: var(--ui);
+  text-shadow: 0 0 6px var(--ui-glow);
+}
+
+.options-item:hover,
+.options-item:focus-visible {
+  color: var(--ui);
+  text-shadow: 0 0 10px var(--ui);
+}
+
+/* ------------------------------------------------------------ glitch text */
+
+.glitch-char {
+  position: relative;
+  display: inline-block;
+  margin-right: var(--glitch-spacing, 0.12em);
+}
+
+.glitch-char:last-child {
+  margin-right: 0;
+}
+
+.glitch-real.hidden {
+  visibility: hidden;
+}
+
+.glitch-glyph {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--glyph-font, monospace);
+  white-space: nowrap;
+}
+
+.glitch-glyph.mirrored {
+  transform: translate(-50%, -50%) scaleX(-1);
+}
+
+/* -------------------------------------------------------- settings panel */
+
+.settings-panel {
+  /* Panel text uses the full interface color, like the options-bar entry. */
+  --ui-dim: var(--ui);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: color-mix(in srgb, var(--ui) 3%, rgba(0, 0, 0, 0.82));
+  border-left: 1px solid var(--ui-faint);
+  backdrop-filter: blur(6px);
+  font-size: 0.8rem;
+  animation: panel-in 0.25s ease-out;
+}
+
+@keyframes panel-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 1rem 1rem 0.5rem;
+}
+
+.settings-title {
+  font-size: 1.05rem;
+  text-shadow: 0 0 8px var(--ui-glow);
+}
+
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
+  padding: 0 1rem 0.75rem;
+  border-bottom: 1px solid var(--ui-faint);
+}
+
+.settings-status {
+  margin-left: auto;
+}
+
+.settings-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 1rem 2rem;
+  scrollbar-color: var(--ui-dim) transparent;
+}
+
+.settings-section {
+  border-bottom: 1px solid var(--ui-faint);
+  padding: 0.35rem 0;
+}
+
+.settings-section summary {
+  cursor: pointer;
+  padding: 0.3rem 0;
+  list-style: none;
+}
+
+.settings-section summary::before {
+  content: '+ ';
+  color: var(--ui-dim);
+}
+
+.settings-section[open] summary::before {
+  content: '- ';
+}
+
+/* ---------------------------------------------------------------- fields */
+
+.field {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr 4.2rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0;
+  color: var(--ui-dim);
+}
+
+.field-text {
+  grid-template-columns: 1fr;
+}
+
+.field-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.field input[type='range'] {
+  width: 100%;
+  accent-color: var(--ui);
+}
+
+.field input[type='checkbox'] {
+  accent-color: var(--ui);
+  justify-self: start;
+}
+
+.field input[type='color'] {
+  width: 100%;
+  height: 1.4rem;
+  padding: 0;
+  border: 1px solid var(--ui-faint);
+  background: none;
+}
+
+.field-number,
+.field textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--ui);
+  background: color-mix(in srgb, var(--ui) 5%, transparent);
+  border: 1px solid var(--ui-faint);
+  padding: 0.15rem 0.3rem;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.field-number:focus,
+.field textarea:focus {
+  outline: 1px solid var(--ui-dim);
+}
